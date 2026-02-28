@@ -1,0 +1,62 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">{{ quiz.title }}</h1>
+    <p class="subtitle">{{ quiz.description|default:"No description" }}</p>
+</section>
+
+<div class="card">
+    <div class="row">
+        <h3>Questions</h3>
+        <div class="row">
+            <a class="btn btn-secondary" href="{% url 'quiz:admin_quiz_edit' quiz.id %}">Edit Quiz</a>
+            <form method="post" action="{% url 'quiz:admin_quiz_toggle_publish' quiz.id %}">
+                {% csrf_token %}
+                {% if quiz.is_published %}
+                    <button class="btn btn-secondary" type="submit">Unpublish</button>
+                {% else %}
+                    <button class="btn btn-primary" type="submit">Publish</button>
+                {% endif %}
+            </form>
+            <a class="btn btn-primary" href="{% url 'quiz:admin_question_create' quiz.id %}">Add Question</a>
+            <form method="post" action="{% url 'quiz:admin_quiz_delete' quiz.id %}" onsubmit="return confirm('Delete this quiz and all questions?');">
+                {% csrf_token %}
+                <button class="btn btn-secondary" type="submit">Delete Quiz</button>
+            </form>
+        </div>
+    </div>
+
+    {% if quiz.questions.count %}
+        <ul class="list">
+            {% for question in quiz.questions.all %}
+                <li>
+                    <div class="row">
+                        <strong>Q{{ forloop.counter }}. {{ question.question }}</strong>
+                        <div class="row">
+                            <a class="btn btn-secondary" href="{% url 'quiz:admin_question_edit' quiz.id question.id %}">Edit</a>
+                            <form method="post" action="{% url 'quiz:admin_question_delete' quiz.id question.id %}" onsubmit="return confirm('Delete this question?');">
+                                {% csrf_token %}
+                                <button class="btn btn-secondary" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    <ul>
+                        {% for opt in question.options.all %}
+                            <li>
+                                {{ opt.option }}
+                                {% if opt.is_correct %}
+                                    <span class="tag">Correct</span>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li class="muted">No options added.</li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No questions added yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

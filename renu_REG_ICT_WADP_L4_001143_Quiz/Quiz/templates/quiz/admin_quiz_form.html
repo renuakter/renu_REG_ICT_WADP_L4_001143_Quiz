@@ -1,0 +1,22 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">{% if quiz %}Edit Quiz{% else %}Post New Quiz{% endif %}</h1>
+    <p class="subtitle">{% if quiz %}Update quiz title and description from here.{% else %}Add title and description. You can publish after adding questions.{% endif %}</p>
+</section>
+
+<form method="post" class="card form-card">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="field">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">{% if quiz %}Update Quiz{% else %}Create Quiz{% endif %}</button>
+    {% if quiz %}
+        <a class="btn btn-secondary" href="{% url 'quiz:admin_quiz_detail' quiz.id %}">Back</a>
+    {% endif %}
+</form>
+{% endblock %}

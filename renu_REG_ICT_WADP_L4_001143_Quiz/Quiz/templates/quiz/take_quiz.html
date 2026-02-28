@@ -1,0 +1,22 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">{{ quiz.title }}</h1>
+    <p class="subtitle">{{ quiz.description|default:"Read each question carefully and select the best answer." }}</p>
+</section>
+
+<form method="post" class="card">
+    {% csrf_token %}
+    {{ form.quiz_id }}
+
+    {% for question, bound_field in question_forms %}
+        <div class="question">
+            <p class="question-title"><strong>{{ forloop.counter }}.</strong> {{ question.question }}</p>
+            {{ bound_field.errors }}
+            {{ bound_field }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">Submit Quiz</button>
+</form>
+{% endblock %}

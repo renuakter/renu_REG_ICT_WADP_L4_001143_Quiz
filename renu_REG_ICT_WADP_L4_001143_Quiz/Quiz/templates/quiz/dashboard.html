@@ -1,0 +1,59 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">Participant Dashboard</h1>
+    <p class="subtitle">Choose any published quiz, submit answers, and review attempt history from one place.</p>
+</section>
+
+<div class="grid two">
+    <section class="card">
+        <div class="row">
+            <h3>Available Quizzes</h3>
+            <span class="tag">{{ quizzes|length }} total</span>
+        </div>
+
+        {% if quizzes %}
+            <ul class="list">
+                {% for quiz in quizzes %}
+                    <li>
+                        <div class="row">
+                            <div>
+                                <strong>{{ quiz.title }}</strong>
+                                <p class="muted">{{ quiz.description|default:"No description" }}</p>
+                            </div>
+                            <a href="{% url 'quiz:take_quiz' quiz.id %}" class="btn btn-primary">Start Quiz</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">No quizzes are available right now.</p>
+        {% endif %}
+    </section>
+
+    <section class="card">
+        <div class="row">
+            <h3>My Attempts</h3>
+            <span class="tag">{{ attempts|length }} attempts</span>
+        </div>
+
+        {% if attempts %}
+            <ul class="list">
+                {% for attempt in attempts %}
+                    <li>
+                        <div class="row">
+                            <div>
+                                <strong>{{ attempt.quiz.title }}</strong>
+                                <p class="muted">Score: {{ attempt.score }}/{{ attempt.total }}</p>
+                            </div>
+                            <a href="{% url 'quiz:result' attempt.id %}" class="btn btn-secondary">View Result</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="muted">You have not attempted any quiz yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

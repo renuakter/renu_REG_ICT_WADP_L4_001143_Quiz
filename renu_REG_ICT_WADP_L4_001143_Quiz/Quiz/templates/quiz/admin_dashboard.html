@@ -1,0 +1,36 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">Admin Quiz Interface</h1>
+    <p class="subtitle">Create quizzes, control publish status, and manage questions from this workspace.</p>
+</section>
+
+<div class="card">
+    <div class="row">
+        <h3>All Quizzes</h3>
+        <a class="btn btn-primary" href="{% url 'quiz:admin_quiz_create' %}">Post New Quiz</a>
+    </div>
+
+    {% if quizzes %}
+        <ul class="list">
+            {% for quiz in quizzes %}
+                <li>
+                    <div class="row">
+                        <div>
+                            <strong>{{ quiz.title }}</strong>
+                            <p class="muted">{{ quiz.description|default:"No description" }}</p>
+                            <p class="muted">Questions: {{ quiz.questions.count }} | Status: {% if quiz.is_published %}Published{% else %}Draft{% endif %}</p>
+                        </div>
+                        <div class="row">
+                            <a class="btn btn-secondary" href="{% url 'quiz:admin_quiz_edit' quiz.id %}">Edit</a>
+                            <a class="btn btn-secondary" href="{% url 'quiz:admin_quiz_detail' quiz.id %}">Manage</a>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="muted">No quizzes created yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">Welcome Back</h1>
+    <p class="subtitle">Login with username or email and continue your quiz journey.</p>
+</section>
+
+<form method="post" class="card form-card">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="field">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Login</button>
+</form>
+{% endblock %}

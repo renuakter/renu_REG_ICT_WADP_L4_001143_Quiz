@@ -1,0 +1,121 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">{% if question %}Edit Question{% else %}Add Question{% endif %}</h1>
+    <p class="subtitle">Quiz: <strong>{{ quiz.title }}</strong>. Minimum 2 options and exactly 1 correct answer required.</p>
+</section>
+
+<style>
+    .option-row {
+        display: grid;
+        grid-template-columns: 1fr 140px 120px;
+        gap: 0.7rem;
+        align-items: end;
+    }
+    .option-row .field {
+        margin-bottom: 0;
+    }
+    @media (max-width: 760px) {
+        .option-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<form method="post" class="card">
+    {% csrf_token %}
+    {{ question_form.non_field_errors }}
+
+    {% for field in question_form %}
+        <div class="field">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </div>
+    {% endfor %}
+
+    <h3>Options</h3>
+    {{ option_formset.management_form }}
+    {{ option_formset.non_form_errors }}
+    <div id="options-list">
+    {% for form in option_formset %}
+        <div class="question option-item">
+            {{ form.non_field_errors }}
+            <div class="option-row">
+                <div class="field">
+                    {{ form.option.label_tag }}
+                    {{ form.option }}
+                    {{ form.option.errors }}
+                </div>
+                <div class="field">
+                    {{ form.is_correct.label_tag }}
+                    {{ form.is_correct }}
+                    {{ form.is_correct.errors }}
+                </div>
+                {% if form.DELETE %}
+                    <div class="field">
+                        {{ form.DELETE.label_tag }}
+                        {{ form.DELETE }}
+                        {{ form.DELETE.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+        </div>
+    {% endfor %}
+    </div>
+
+    <button type="button" id="add-option-btn" class="btn btn-secondary">Add Option</button>
+
+    <button class="btn btn-primary" type="submit">{% if question %}Update Question{% else %}Save Question{% endif %}</button>
+    <a class="btn btn-secondary" href="{% url 'quiz:admin_quiz_detail' quiz.id %}">Back</a>
+</form>
+
+<template id="empty-option-form">
+    <div class="question option-item">
+        {{ option_formset.empty_form.non_field_errors }}
+        <div class="option-row">
+            <div class="field">
+                {{ option_formset.empty_form.option.label_tag }}
+                {{ option_formset.empty_form.option }}
+                {{ option_formset.empty_form.option.errors }}
+            </div>
+            <div class="field">
+                {{ option_formset.empty_form.is_correct.label_tag }}
+                {{ option_formset.empty_form.is_correct }}
+                {{ option_formset.empty_form.is_correct.errors }}
+            </div>
+            {% if option_formset.empty_form.DELETE %}
+                <div class="field">
+                    {{ option_formset.empty_form.DELETE.label_tag }}
+                    {{ option_formset.empty_form.DELETE }}
+                    {{ option_formset.empty_form.DELETE.errors }}
+                </div>
+            {% endif %}
+        </div>
+        {% for hidden in option_formset.empty_form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+    </div>
+</template>
+
+<script>
+    (function () {
+        const addBtn = document.getElementById("add-option-btn");
+        const list = document.getElementById("options-list");
+        const totalForms = document.getElementById("id_options-TOTAL_FORMS");
+        const template = document.getElementById("empty-option-form");
+
+        if (!addBtn || !list || !totalForms || !template) return;
+
+        addBtn.addEventListener("click", function () {
+            const formIndex = Number(totalForms.value);
+            const html = template.innerHTML.replace(/__prefix__/g, formIndex);
+            list.insertAdjacentHTML("beforeend", html);
+            totalForms.value = formIndex + 1;
+        });
+    })();
+</script>
+{% endblock %}

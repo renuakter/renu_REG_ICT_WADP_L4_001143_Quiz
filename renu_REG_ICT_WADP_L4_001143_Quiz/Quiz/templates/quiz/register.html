@@ -1,0 +1,22 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">Create Your Account</h1>
+    <p class="subtitle">Join the portal to attempt quizzes and track your performance leaderboard.</p>
+</section>
+
+<form method="post" class="card form-card">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="field">
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+            {% if field.help_text %}
+                <p class="muted">{{ field.help_text }}</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+{% endblock %}

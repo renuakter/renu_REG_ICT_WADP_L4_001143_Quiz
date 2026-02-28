@@ -1,0 +1,44 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+<section class="hero">
+    <h1 class="title">Quiz Result</h1>
+    <p class="subtitle">Your score, ranking, and current leaderboard snapshot.</p>
+</section>
+
+<div class="card">
+    <div class="stats">
+        <div class="stat">
+            <small>Quiz</small>
+            <strong>{{ attempt.quiz.title }}</strong>
+        </div>
+        <div class="stat">
+            <small>Your Score</small>
+            <strong>{{ attempt.score }}/{{ attempt.total }}</strong>
+        </div>
+        <div class="stat">
+            <small>Your Position</small>
+            <strong>{{ position }}</strong>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="row">
+        <h3>Top 10 Leaderboard</h3>
+        <a href="{% url 'quiz:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <ol class="list">
+        {% for row in leaderboard %}
+            <li>
+                <div class="row">
+                    <strong>{{ row.participant.name }}</strong>
+                    <span class="tag">{{ row.score }}/{{ row.total }}</span>
+                </div>
+            </li>
+        {% empty %}
+            <li><p class="muted">No attempts yet.</p></li>
+        {% endfor %}
+    </ol>
+</div>
+{% endblock %}
